@@ -22,7 +22,7 @@
 | Item | Value |
 | --- | --- |
 | Node | v24.21.0（nvm，user-local；`~/.nvm`） |
-| npm | 11.19.0 |
+| Package manager | **npm 11.19.0，唯一** —— 只提交 `package-lock.json`。不要用 pnpm 或 yarn：demo 機的 `node_modules` 是 npm 裝的並已實機驗證，`npx expo install` 也只寫 `package-lock.json`。`pnpm-lock.yaml` 已從 repo 移除並列入 `.gitignore` |
 | Template | `create-expo-app@latest --template blank-typescript` |
 | Scaffold method | 先在 repo 外建立，再只複製 `App.tsx`、`index.ts`、`app.json`、`package.json`、`tsconfig.json`、`.gitignore`、`assets/`，保留原有 Markdown |
 | Image picker | `expo-image-picker@~57.0.20`（`npx expo install` 選定的 SDK 57 相容版本） |
