@@ -6,9 +6,10 @@
  */
 
 import { CreateMomentInput, Moment, NOTE_MAX_LENGTH } from '../types/moment';
+import { SEED_MOMENTS } from './seedMoments';
 
-/** Newest first. */
-const moments: Moment[] = [];
+/** Live submissions newest first, with the demo seed behind them. */
+const moments: Moment[] = [...SEED_MOMENTS];
 
 /** The prototype does not ask for a location yet. */
 const DEFAULT_LOCATION = 'Taipei';
