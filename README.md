@@ -9,7 +9,7 @@ LOOK UP 是兩人、120 分鐘 Hackathon 的 mobile app functional prototype。�
 1. 兩位開發者一起讀 [PROJECT.md](PROJECT.md)、[MVP.md](MVP.md)、[AGENTS.md](AGENTS.md)。
 2. 先照 [docs/BUILD-PLAN.md](docs/BUILD-PLAN.md) 用 Expo + React Native + TypeScript 建立**一次**可在手機跑的共同基底；若兩人要換 stack，開發前一起修改決策。
 3. 10 分鐘內確認唯一的 Moment contract 位置與提交介面，記入 [docs/DATA-MODEL.md](docs/DATA-MODEL.md)。
-4. Person A 與 B 各用自己的 [prompt](prompts/)，各自分支或 worktree 開發；依 integration prompt 合併，最後 freeze demo。
+4. 先使用 [scaffold prompt](prompts/00-scaffold.md) 建立一次共同基底；Person A 與 B 再各用自己的 [prompt](prompts/)，各自分支或 worktree 開發；依 integration prompt 合併，最後 freeze demo。
 
 ## 文件導覽
 
@@ -21,6 +21,6 @@ LOOK UP 是兩人、120 分鐘 Hackathon 的 mobile app functional prototype。�
 - [docs/BUILD-PLAN.md](docs/BUILD-PLAN.md)：App 新手的 stack、檔案邊界和分支順序
 - [docs/DATA-MODEL.md](docs/DATA-MODEL.md)：唯一 contract 規則
 - [docs/DEMO.md](docs/DEMO.md)：60 秒展示及驗收
-- [prompts/](prompts/)：Person A、Person B、整合、demo freeze
+- [prompts/](prompts/)：共同 scaffold、Person A、Person B、整合、demo freeze
 
 本 repo 目前只有開發文件，已建議 Expo stack，但尚未建立或測試 app。
