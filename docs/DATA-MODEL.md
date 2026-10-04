@@ -28,4 +28,22 @@ Use `submitMoment(input: CreateMomentInput): Promise<Moment>` and `listPublicMom
 - `listPublicMoments` 回傳 newest-first，且只含 `visibility === 'public'`。Seed 範例永遠排在真實投稿之後。
 - `location` 由 B 在提交時填入 `'Taipei'`，`createdAt` 用提交時刻；A 不需要傳這兩個欄位。
 
+## A 的畫面會收到的 props（integrator 已在 `App.tsx` 接好）
+
+A 不直接 import `src/data/moments.ts`，一律透過注入的 props：
+
+```ts
+type LandingScreenProps = {
+  onStart: () => void;                 // 進入 capture
+};
+
+type CaptureScreenProps = {
+  onSubmit: (input: CreateMomentInput) => Promise<Moment>;  // 已含 WORLD 重載
+  onDone: () => void;                  // 導向 WORLD，由 A 決定何時呼叫
+  onCancel: () => void;                // 回 landing
+};
+```
+
+`onSubmit` 會儲存並讓 WORLD 重新載入，但**不會自己換畫面**；導航仍由 A 控制，所以 private 投稿可以留在原畫面顯示成功訊息，不必跳到 WORLD。檔名請用 `src/screens/LandingScreen.tsx` 與 `src/screens/CaptureScreen.tsx`，default export，integrator 才接得上。
+
 For the full product, add capturedAt, capture date/timezone, owner ID, replacement linkage, durable image storage and a reliable eligibility decision. Those are post-MVP and must not silently expand the prototype contract.

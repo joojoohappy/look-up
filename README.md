@@ -25,4 +25,6 @@ LOOK UP 是兩人、120 分鐘 Hackathon 的 mobile app functional prototype。�
 
 共同 Expo scaffold 已建立並提交到 `main`（Expo SDK 57 + React Native 0.86 + TypeScript，含 `expo-image-picker`），**已在實機 Expo Go 開啟驗證通過**。唯一的 Moment contract 也在 `main`。實際版本與執行指令見 [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)。
 
-兩人可以從 `main` 開始並行開發。尚未完成：Person A 的 capture 流程、`App.tsx` 的整合（需先指定 integrator）、以及端對端實機驗收。
+WORLD 與 `App.tsx` 的整合也已在 `main`：submit 會自動讓 WORLD 重載。**Person B 是 integrator**，只有 B 修改 `App.tsx`、`index.ts`、`package.json` 與 shared config。
+
+尚未完成：Person A 的 landing／capture 畫面（props 介面見 [docs/DATA-MODEL.md](docs/DATA-MODEL.md)），以及公開／私密主路徑的端對端實機驗收。

@@ -1,0 +1,4 @@
+# Keep line endings stable across the two developers' editors. Without this a
+# CRLF-converting editor rewrites whole files and every integration conflicts.
+* text=auto eol=lf
+*.png binary

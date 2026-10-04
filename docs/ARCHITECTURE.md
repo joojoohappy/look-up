@@ -13,7 +13,7 @@
 | Unique contract file | `src/types/moment.ts`，B 維護 |
 | Shared submit/query interface | `src/data/moments.ts`，B 維護；見 BUILD-PLAN.md |
 | App entry / navigation | `App.tsx`（`index.ts` → `registerRootComponent`）。無 Expo Router、無 navigation library；三個畫面用 App.tsx 內的 state 切換 |
-| Shared entry point / navigation integrator | 兩人先指定一位 integrator，只有該人修改 |
+| Shared entry point / navigation integrator | **Person B 擔任 integrator**；只有 B 修改 `App.tsx`、`index.ts`、`package.json` 與 shared config |
 
 ## Baseline as built
 
