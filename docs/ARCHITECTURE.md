@@ -7,7 +7,7 @@
 | Decision | Frozen choice |
 | --- | --- |
 | Mobile framework / version | Expo SDK 57.0.26 + React Native 0.86.3 + React 19.2.3 + TypeScript 6.0.3 |
-| Target device / run command | TBD by developers；`npm start` 後用 Expo Go 掃 QR |
+| Target device / run command | 實機 + Expo Go；`npm start` 後掃 QR（手機與電腦需同一 Wi-Fi）。無模擬器：此機器沒有 Xcode 或 Android Studio |
 | Image storage and URI lifecycle | P0 使用 picker URI，僅保證同一 app session 可顯示 |
 | Moment persistence / public query | P0 單一 in-memory store；無跨裝置共享或 durable persistence |
 | Unique contract file | `src/types/moment.ts`，B 維護 |
@@ -27,7 +27,7 @@
 | Scaffold method | 先在 repo 外建立，再只複製 `App.tsx`、`index.ts`、`app.json`、`package.json`、`tsconfig.json`、`.gitignore`、`assets/`，保留原有 Markdown |
 | Image picker | `expo-image-picker@~57.0.20`（`npx expo install` 選定的 SDK 57 相容版本） |
 | Typecheck | `npx tsc --noEmit` 通過 |
-| Target phone | **尚未驗證** — 需有人用 Expo Go 掃 QR 確認 |
+| Target phone | **已通過** — 2026-10-04 實機 Expo Go 開啟 baseline 成功（裝置型號待補） |
 
 Setup / run：
 
