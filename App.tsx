@@ -6,8 +6,8 @@
  */
 
 import { StatusBar } from 'expo-status-bar';
-import { useCallback, useState } from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { useCallback, useEffect, useState } from 'react';
+import { BackHandler, Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { submitMoment } from './src/data/moments';
 import WorldScreen from './src/screens/WorldScreen';
@@ -30,6 +30,22 @@ export default function App() {
     setSubmitCount((count) => count + 1);
     return moment;
   }, []);
+
+  // The demo device is Android, where the back gesture would otherwise leave
+  // the app and wipe the in-memory store mid-demo. Landing is the root: back
+  // from there exits, as Android users expect.
+  useEffect(() => {
+    const subscription = BackHandler.addEventListener('hardwareBackPress', () => {
+      if (screen === 'landing') {
+        return false;
+      }
+      // Capture and WORLD both step back to landing, which also gives WORLD a
+      // route back into the journey for repeat demo runs.
+      setScreen('landing');
+      return true;
+    });
+    return () => subscription.remove();
+  }, [screen]);
 
   if (screen === 'world') {
     return (
