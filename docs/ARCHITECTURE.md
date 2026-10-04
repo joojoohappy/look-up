@@ -6,13 +6,39 @@
 
 | Decision | Frozen choice |
 | --- | --- |
-| Mobile framework / version | Expo + React Native + TypeScript；初始化時記錄實際版本 |
-| Target device / run command | TBD by developers |
+| Mobile framework / version | Expo SDK 57.0.26 + React Native 0.86.3 + React 19.2.3 + TypeScript 6.0.3 |
+| Target device / run command | TBD by developers；`npm start` 後用 Expo Go 掃 QR |
 | Image storage and URI lifecycle | P0 使用 picker URI，僅保證同一 app session 可顯示 |
 | Moment persistence / public query | P0 單一 in-memory store；無跨裝置共享或 durable persistence |
 | Unique contract file | `src/types/moment.ts`，B 維護 |
 | Shared submit/query interface | `src/data/moments.ts`，B 維護；見 BUILD-PLAN.md |
+| App entry / navigation | `App.tsx`（`index.ts` → `registerRootComponent`）。無 Expo Router、無 navigation library；三個畫面用 App.tsx 內的 state 切換 |
 | Shared entry point / navigation integrator | 兩人先指定一位 integrator，只有該人修改 |
+
+## Baseline as built
+
+一次性 scaffold 已建立於本 repo（非第二個 app）。實際狀態：
+
+| Item | Value |
+| --- | --- |
+| Node | v24.21.0（nvm，user-local；`~/.nvm`） |
+| npm | 11.19.0 |
+| Template | `create-expo-app@latest --template blank-typescript` |
+| Scaffold method | 先在 repo 外建立，再只複製 `App.tsx`、`index.ts`、`app.json`、`package.json`、`tsconfig.json`、`.gitignore`、`assets/`，保留原有 Markdown |
+| Image picker | `expo-image-picker@~57.0.20`（`npx expo install` 選定的 SDK 57 相容版本） |
+| Typecheck | `npx tsc --noEmit` 通過 |
+| Target phone | **尚未驗證** — 需有人用 Expo Go 掃 QR 確認 |
+
+Setup / run：
+
+```bash
+export NVM_DIR="$HOME/.nvm"; . "$NVM_DIR/nvm.sh"   # 新 shell 需先載入 nvm
+npm install
+npm start                                           # Expo Go 掃 QR
+npx tsc --noEmit                                    # typecheck
+```
+
+已知問題：此機器原本沒有 Node、Homebrew 或 nvm，Node 以 nvm 安裝，安裝程式已在 `~/.zshrc` 附加 nvm 載入片段。`npm audit` 回報 23 個 transitive 相依套件弱點，屬 Expo 模板預設狀態，P0 不處理。
 
 ## Ownership boundary
 
