@@ -27,7 +27,8 @@
 | Scaffold method | 先在 repo 外建立，再只複製 `App.tsx`、`index.ts`、`app.json`、`package.json`、`tsconfig.json`、`.gitignore`、`assets/`，保留原有 Markdown |
 | Image picker | `expo-image-picker@~57.0.20`（`npx expo install` 選定的 SDK 57 相容版本） |
 | Typecheck | `npx tsc --noEmit` 通過 |
-| Target phone | **已通過** — 2026-10-04 實機 Expo Go 開啟 baseline 成功（裝置型號待補） |
+| Target phone | **Demo 機：Pixel 10（Android）**。2026-10-04 實機 Expo Go 開啟 baseline 成功。iPhone 17 Pro 也在手上，但不是驗收標的 |
+| Safe area | 無 `react-native-safe-area-context`；`WorldScreen` 自行處理頂部邊距：Android 取 `StatusBar.currentHeight + 16`（demo 路徑，向系統拿真實高度），iOS 寫死 `64`（未在動態島機型實測） |
 
 Setup / run：
 
