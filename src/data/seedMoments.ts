@@ -1,54 +1,48 @@
 /**
  * Demo seed for WORLD. Person B owns this file.
  *
- * These are deliberately not photographs — each image is a six-pixel gradient
- * scaled up, so it reads as an abstract wash — and WORLD badges every one of
- * them as a demo example. They exist only so WORLD is not an empty grid during
- * the demo. They must never stand in for a real submission.
+ * Real photographs supplied for the demo, inlined from seedImages.ts. WORLD
+ * badges every one of them as a demo example and always lists them behind live
+ * moments. They exist only so WORLD is not an empty grid during the demo; they
+ * must never stand in for a real submission.
  */
 
 import { Moment } from '../types/moment';
+import { SEED_IMAGE_CLOUD, SEED_IMAGE_CONTRAILS, SEED_IMAGE_HARBOUR } from './seedImages';
 
 export const SEED_ID_PREFIX = 'seed-';
-
-/** Tiny inline gradients: no network, no bundled assets, obviously not photos. */
-const SKY = {
-  dawn:
-    'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAGCAIAAABrW6giAAAAK0lEQVR42mP4v70Ojhj+H5wARwz/Ti+EI4Z/VzbDEcPfe0fgiOHvi2twBACuNDs1mp/BRgAAAABJRU5ErkJggg==',
-  noon:
-    'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAGCAIAAABrW6giAAAAK0lEQVR42mOo2PAajhh6976DI4aFpz7CEcO2a1/hiOHU4x9wxHD/w284AgBcMDpdVwPIhwAAAABJRU5ErkJggg==',
-  dusk:
-    'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAGCAIAAABrW6giAAAAKklEQVR42mOIC5sHRwyVafPhiGFq+QI4YtjQvgiOGM7MWAxHDM9XLIEjAM9PKj0VqHcwAAAAAElFTkSuQmCC',
-};
 
 function hoursAgo(hours: number): string {
   return new Date(Date.now() - hours * 60 * 60 * 1000).toISOString();
 }
 
-/** Kept small on purpose. WORLD lists these after every live moment. */
+/**
+ * Kept small on purpose, newest first. The ages roughly match the light in
+ * each photo, so a midday shot does not claim to be from before dawn.
+ */
 export const SEED_MOMENTS: Moment[] = [
   {
-    id: `${SEED_ID_PREFIX}dawn`,
-    imageUri: SKY.dawn,
-    note: 'Demo example — orange over the rooftops.',
+    id: `${SEED_ID_PREFIX}cloud`,
+    imageUri: SEED_IMAGE_CLOUD,
+    note: 'Demo example — one cloud, all afternoon.',
     visibility: 'public',
-    createdAt: hoursAgo(5),
+    createdAt: hoursAgo(2),
     location: 'Taipei',
   },
   {
-    id: `${SEED_ID_PREFIX}noon`,
-    imageUri: SKY.noon,
-    note: 'Demo example — nothing but blue today.',
+    id: `${SEED_ID_PREFIX}contrails`,
+    imageUri: SEED_IMAGE_CONTRAILS,
+    note: 'Demo example — contrails over the road.',
     visibility: 'public',
-    createdAt: hoursAgo(9),
-    location: 'Lisbon',
+    createdAt: hoursAgo(19),
+    location: 'Taipei',
   },
   {
-    id: `${SEED_ID_PREFIX}dusk`,
-    imageUri: SKY.dusk,
-    note: 'Demo example — looked up on the way home.',
+    id: `${SEED_ID_PREFIX}harbour`,
+    imageUri: SEED_IMAGE_HARBOUR,
+    note: 'Demo example — the harbour before dark.',
     visibility: 'public',
-    createdAt: hoursAgo(14),
+    createdAt: hoursAgo(20),
     location: 'Taipei',
   },
 ];
