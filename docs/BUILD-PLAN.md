@@ -11,7 +11,7 @@ P0 uses one in-app, in-memory moment store. A genuinely selected photo must appe
 ## Order of work
 
 1. Together install Node.js LTS and Expo Go. For iPhone, Expo CLI and Expo Go may need the same free Expo account. Open a default Expo app on the target phone before dividing work.
-2. One person creates the Expo app **once in this repo**, installs `expo-image-picker`, runs it on the phone, and commits the scaffold to `main`. Record actual commands, versions and device in docs/ARCHITECTURE.md. Do not let both AIs create separate apps.
+2. One person uses `prompts/00-scaffold.md` to create the Expo app **once in this repo**, preserving the existing documents, installs `expo-image-picker`, runs it on the phone, and commits the scaffold to `main`. Record actual commands, versions and device in docs/ARCHITECTURE.md. Do not let both AIs create separate apps.
 3. Agree `src/types/moment.ts` and the API below. Person B commits the single contract to `main`. Both developers pull this same commit before creating separate `capture` and `world` branches/worktrees.
 4. Give each AI only its own prompt: `prompts/person-a-capture.md` or `prompts/person-b-world.md`. Never write concurrently in one working directory.
 5. At minute 75, one integrator merges the branches and uses `prompts/integration.md`. Only the integrator edits shared navigation/entry. The owner resolves conflicts in owned files.
