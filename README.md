@@ -27,4 +27,6 @@ LOOK UP 是兩人、120 分鐘 Hackathon 的 mobile app functional prototype。�
 
 WORLD 與 `App.tsx` 的整合也已在 `main`：submit 會自動讓 WORLD 重載。**Person B 是 integrator**，只有 B 修改 `App.tsx`、`index.ts`、`package.json` 與 shared config。
 
-尚未完成：Person A 的 landing／capture 畫面（props 介面見 [docs/DATA-MODEL.md](docs/DATA-MODEL.md)），以及公開／私密主路徑的端對端實機驗收。
+三個畫面都已接上：landing → capture → WORLD，全在 `App.tsx` 的 state machine 裡，無 navigation library。Demo 機是 **Pixel 10**；Android 返回手勢已接管，不會中途退出 app 清掉 in-memory store。
+
+尚未完成：公開／私密主路徑的端對端實機驗收（見 [docs/DEMO.md](docs/DEMO.md) 的驗收清單）。
