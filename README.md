@@ -23,4 +23,4 @@ LOOK UP 是兩人、120 分鐘 Hackathon 的 mobile app functional prototype。�
 - [docs/DEMO.md](docs/DEMO.md)：60 秒展示及驗收
 - [prompts/](prompts/)：共同 scaffold、Person A、Person B、整合、demo freeze
 
-共同 Expo scaffold 已建立並提交到 `main`（Expo SDK 57 + React Native 0.86 + TypeScript，含 `expo-image-picker`）。**尚未在實機 Expo Go 驗證**；實際版本與執行指令見 [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)。
+本 repo 已建立 Expo TypeScript scaffold 與唯一 Moment contract；型別檢查和 iOS JavaScript 打包已通過。iPhone Expo Go 實測待確認，產品畫面尚未開發。
