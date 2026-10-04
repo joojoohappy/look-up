@@ -29,4 +29,4 @@ WORLD 與 `App.tsx` 的整合也已在 `main`：submit 會自動讓 WORLD 重載
 
 三個畫面都已接上：landing → capture → WORLD，全在 `App.tsx` 的 state machine 裡，無 navigation library。Demo 機是 **Pixel 10**；Android 返回手勢已接管，不會中途退出 app 清掉 in-memory store。
 
-尚未完成：公開／私密主路徑的端對端實機驗收（見 [docs/DEMO.md](docs/DEMO.md) 的驗收清單）。
+**端對端驗收已於 Pixel 10 通過**：拍真實照片 → 預覽 → 寫 note → 公開提交 → 同一張照片出現在 WORLD 最上方；同一輪的 private 投稿確認**不會**出現在 WORLD。剩下的是 demo freeze 與連續三次實機演練，見 [docs/DEMO.md](docs/DEMO.md)。
