@@ -6,7 +6,7 @@
 
 | Decision | Frozen choice |
 | --- | --- |
-| Mobile framework / version | **Expo SDK 58 + React Native 0.88**（2026-10-22 自 SDK 57.0.26 / RN 0.86.3 升級）。確切版本以 `package.json` / `package-lock.json` 為準，由 `.github/workflows/sync-deps.yml` 執行官方 `npx expo install expo@^58.0.0 --fix` 產生；目標 SDK 寫在 `.github/expo-sdk-target` |
+| Mobile framework / version | **Expo SDK 58（expo 58.0.17）+ React Native 0.88.0 + React 19.3.0 + TypeScript 6.0.3**（2026-10-22 自 SDK 57 / RN 0.86.3 升級）。確切版本以 `package.json` / `package-lock.json` 為準，由 `.github/workflows/sync-deps.yml` 執行官方 `npx expo install expo@^58.0.0 --fix` 產生；目標 SDK 寫在 `.github/expo-sdk-target` |
 | Target device / run command | 實機 + Expo Go；`npm start` 後掃 QR（手機與電腦需同一 Wi-Fi；連不上改 `npm run start:tunnel`）。**Expo Go 必須是支援 SDK 58 的版本**：商店版在 SDK 58 發布（2026-10-15）後數週內更新；之前 Android 可由 expo.dev/go 安裝，iOS 需 `eas go`（Apple Developer 帳號）。無模擬器：此機器沒有 Xcode 或 Android Studio |
 | Image storage and URI lifecycle | P0 使用 picker URI，僅保證同一 app session 可顯示 |
 | Moment persistence / public query | P0 單一 in-memory store；無跨裝置共享或 durable persistence |

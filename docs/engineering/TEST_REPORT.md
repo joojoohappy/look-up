@@ -33,10 +33,16 @@ Tests use only what the lockfile already has (TypeScript + Node's built-in runne
 | Session 2: `npm run test:unit` after LU-8/9 | 20 pass, 0 fail |
 | Session 2: mutation — `noteLength`/`clampNote` reverted to UTF-16 | 3 fail (as intended); source restored |
 
+## Results — GitHub Actions (ubuntu-latest, Node 24)
+
+| Run | Branch @ commit | Result |
+| --- | --- | --- |
+| CI 39767842417 | `qa/baseline-and-fixes` @ `b6680a5` (SDK 57.0.31) | **all green**: `npm ci`, full typecheck incl. screens, unit tests, Android + iOS JS bundle, `expo install --check`, `npm audit --audit-level=critical` |
+| CI 39767859131 | `upgrade/expo-sdk-58` @ `e2105f2` (Expo 58.0.17, RN 0.88.0, React 19.3.0) | **all green**: `npm ci`, typecheck incl. tests, `expo lint`, 20 unit tests, 12 jest component/journey tests, Android + iOS JS bundle, `expo install --check`, expo-doctor, `npm audit --audit-level=critical` |
+| Sync dependencies 39766800489 / 39767307753 | `upgrade/expo-sdk-58` | official `npx expo install expo@^58.0.0 --fix` succeeded and committed the lockfile; first gates found: TS 6 does not auto-load `@types/jest` (tests now import `@jest/globals`), tooling saved under `dependencies` (script moves it), 1 lint error (LU-13) |
+| CI 39766886308 | same branch @ `6e70b28` | first real typecheck + bundle: green; `expo install --check` red (`expo@57.0.26, expected ~57.0.31`) → fixed by `ac081d0` (LU-12) |
+
 ## Not executed — do not read as passed
 
-- **All 12 jest component/journey tests**: written and syntax-checked only. They first run in GitHub Actions after the sync-deps job installs jest-expo; expect a round of fixes.
-- `npm run lint`: first runs in CI; expect a round of fixes.
-- `npm run typecheck` on the whole app, `npm run bundle:check`, `npm audit`, `expo install --check`: blocked by registry access in the sandbox. They run in CI.
-- CI workflow: written and YAML-validated, **never run yet**.
+- Nothing runs on a phone in CI. Device status: DEVICE_CHECKS.md.
 - Any device run: no phone or simulator available. LU-1 is device-unverified.
