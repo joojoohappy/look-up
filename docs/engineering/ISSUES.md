@@ -11,25 +11,30 @@ Status words: **fixed (code)** = changed and unit-tested where possible; **devic
 - **Fix:** `WorldScreen` header now renders the existing `onLookUp` prop ("Look up ↑", 44pt target). No new prop, no flow change: it reaches the same landing screen as Android's back gesture.
 - **Verify on device:** iPhone → submit public → WORLD → tap "Look up ↑" → landing → second run.
 
-### LU-2 — Expo Go is about to drop SDK 57 · open, needs owner decision
+### LU-2 — Expo Go is about to drop SDK 57 · fixed on `upgrade/expo-sdk-58` (owner decision 2026-10-22), CI-pending, device-unverified
 - **Evidence (external):** Expo SDK 58 went stable on 2026-10-15; store builds of Expo Go will support only SDK 58 "within a few weeks" (expo.dev/changelog/sdk-58).
 - **Impact:** once a phone's Expo Go auto-updates, this project will refuse to open on it — on any platform. This would also look exactly like "works on one phone, fails on another".
 - **Options:** (a) upgrade: `npx expo install expo@^58.0.0 --fix` on a branch, CI, then both phones; (b) short-term: turn off auto-update for Expo Go on demo phones; (c) longer-term: a development build (iOS needs an Apple Developer account).
-- **Why not done here:** needs registry access and device testing; a framework upgrade is a decision for the owners.
+- **Decision:** owner chose (a) on 2026-10-22.
+- **How:** the cloud sandbox and the owner's linked PC both block the npm registry, so the lockfile cannot be regenerated locally. `.github/expo-sdk-target` = `58`; `.github/workflows/sync-deps.yml` runs `scripts/sync-deps.sh` (the official `npx expo install expo@^58.0.0 --fix`, then `expo install --fix` / `--check`), commits `package.json` + `package-lock.json` to the branch and runs every gate. No version number was typed by hand.
+- **Code impact reviewed against the SDK 58 notes:** no deep `react-native/Libraries/*` imports, no `InteractionManager`, `Touchable`, `ImageBackground`, `Modal animated` or `StatusBar backgroundColor/translucent` use, no Expo Router. Nothing else needed changing.
+- **Caveat:** until the store Expo Go ships SDK 58, an SDK 58 project will not open in it. `qa/baseline-and-fixes` stays on SDK 57 for device testing in the meantime (DEVICE_CHECKS.md step 2).
 
 ### LU-3 — App opened on one collaborator's phone but not another · open, root cause unconfirmed
 - No logs from the failing device exist in the repo. Ranked hypotheses and the diagnostic runbook are in `RELIABILITY.md#startup-runbook`.
 - Only cause with repo evidence: a **signed-in** Expo Go refuses an anonymous CLI (commit `f298882`, BUILD-PLAN.md step 1).
 - Not causes: no backend, no `localhost` URLs, no env vars, no network calls in app code.
+- What changed to make the next failure diagnosable: `npm run start:tunnel` for networks that block phone↔PC traffic, and DEVICE_CHECKS.md step 2 maps each Expo Go error to its fix. Cannot be closed without the failing phone's error screen.
 
 ## P2
 
-### LU-4 — Capture/landing have no top inset on Android · open, not reproduced
+### LU-4 — Capture/landing have no top inset on Android · fixed on `upgrade/expo-sdk-58`, device-unverified
 - `LandingScreen` and `CaptureScreen` rely on React Native's `SafeAreaView`, which only pads on iOS. With SDK 57's Android edge-to-edge, Capture's "← Look Up" control has no top padding and may sit under the status bar. `WorldScreen` already compensates with `StatusBar.currentHeight + 16`, which suggests its author saw this.
-- Proposed fix: adopt `react-native-safe-area-context` (bundled in Expo Go; needs `npx expo install` to update the lockfile) for all three screens, replacing the hand-rolled `TOP_INSET`. Do it with a device in hand.
+- Fix: `react-native-safe-area-context` (added by sync-deps): `SafeAreaProvider` in `App.tsx`, its `SafeAreaView` in Landing/Capture, `useSafeAreaInsets` for WORLD's top and bottom padding. Removes the hard-coded iOS 64pt and React Native's deprecated `SafeAreaView`. Check on both phones (DEVICE_CHECKS.md).
 
-### LU-5 — No lint, no component/E2E tests · open
-- ESLint, jest-expo and React Native Testing Library are not in the lockfile; adding them needs a lockfile update (`npx expo lint`, `npx expo install jest-expo jest @testing-library/react-native -- --save-dev`). Maestro is a reasonable fit for the Expo Go E2E path later.
+### LU-5 — No lint, no component/E2E tests · fixed on `upgrade/expo-sdk-58` (lint + component + journey), CI-pending
+- `eslint.config.js` (eslint-config-expo flat) + `npm run lint`; jest-expo + React Native Testing Library with `__tests__/`: the full demo journey through the real `App` and store (public reaches WORLD with the same photo URI; private never does; LU-1 second run), Capture validation/double tap/failed submit/permission denial/cancel, WORLD seed badges and header exit. Only the native picker and safe-area are mocked (`jest.setup.js`).
+- Device-level E2E (Maestro) deliberately not added: Maestro needs a simulator or a USB-attached phone in CI, which is paid macOS minutes for iOS. Revisit when there is a development build.
 
 ### LU-6 — Standalone builds will need camera permission text · fixed (config)
 - `app.json` now configures the `expo-image-picker` plugin with camera and photo-library texts and `microphonePermission: false` (images only). Expo Go ignores these and shows its own; they take effect in the first EAS/development build.
@@ -48,5 +53,5 @@ Status words: **fixed (code)** = changed and unit-tested where possible; **devic
 ### LU-10 — Android back during an in-flight submit · won't fix (no reachable window)
 - `submitMoment` has no `await` before it stores, so the promise settles in the same tick as the tap; there is no frame in which a back gesture can land mid-submit. Revisit when submission goes over the network.
 
-### LU-11 — 23 transitive npm advisories (recorded 2026-10-04) · open
-- Could not re-run here. The CI `dependency-health` job fails on any **critical** advisory.
+### LU-11 — 23 transitive npm advisories (recorded 2026-10-04) · gated, CI-pending
+- The SDK 58 upgrade replaces most of the tree. CI `dependency-health` fails on any **critical** advisory; lower levels stay visible in its log. Could not be run from the sandbox.

@@ -1,0 +1,72 @@
+# Rewrites package.json + package-lock.json for the Expo SDK in
+# .github/expo-sdk-target (and required tooling), commits the result to the
+# same branch, then runs every quality gate on it.
+#
+# Runs on `upgrade/**` branches when the target or this tooling changes.
+# Its commit is pushed with GITHUB_TOKEN, which by design does not start other
+# workflows, so this job runs the checks itself.
+name: Sync dependencies
+
+on:
+  push:
+    branches: ['upgrade/**']
+    paths:
+      - .github/expo-sdk-target
+      - scripts/sync-deps.sh
+      - .github/workflows/sync-deps.yml
+
+permissions:
+  contents: write
+
+concurrency:
+  group: sync-deps-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - name: Install current lockfile
+        run: npm ci
+
+      - name: Upgrade SDK and add tooling
+        run: bash scripts/sync-deps.sh
+
+      - name: Commit package.json and package-lock.json
+        run: |
+          if git diff --quiet -- package.json package-lock.json; then
+            echo "Dependencies already in sync."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add package.json package-lock.json
+          git commit -m "Sync dependencies to Expo SDK $(tr -d '[:space:]' < .github/expo-sdk-target)"
+          git push
+          git log -1 --stat
+
+      - name: Clean install from the new lockfile
+        run: npm ci
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Tests
+        run: npm test
+
+      - name: Bundle JS for Android and iOS
+        run: npm run bundle:check
+
+      - name: expo-doctor (informational)
+        continue-on-error: true
+        run: npx expo-doctor@latest

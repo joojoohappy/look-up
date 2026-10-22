@@ -21,8 +21,20 @@
     "ios": "expo start --ios",
     "web": "expo start --web",
     "typecheck": "tsc --noEmit",
-    "test": "node -e \"require('fs').rmSync('.test-build',{recursive:true,force:true})\" && tsc -p tsconfig.test.json && node --test \"tests/**/*.test.js\"",
+    "lint": "expo lint",
+    "test": "npm run test:unit && npm run test:components",
+    "test:unit": "node -e \"require('fs').rmSync('.test-build',{recursive:true,force:true})\" && tsc -p tsconfig.test.json && node --test \"tests/**/*.test.js\"",
+    "test:components": "jest --ci",
     "bundle:check": "expo export --platform android --platform ios --output-dir .bundle-check",
-    "check": "npm run typecheck && npm test && npm run bundle:check"
+    "check": "npm run typecheck && npm run lint && npm test && npm run bundle:check"
+  },
+  "jest": {
+    "preset": "jest-expo",
+    "setupFiles": [
+      "<rootDir>/jest.setup.js"
+    ],
+    "testMatch": [
+      "<rootDir>/__tests__/**/*.test.tsx"
+    ]
   }
 }

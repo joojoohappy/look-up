@@ -7,7 +7,7 @@ name: CI
 
 on:
   push:
-    branches: [main]
+    branches: [main, "qa/**", "upgrade/**"]
   pull_request:
   workflow_dispatch:
 
@@ -37,8 +37,14 @@ jobs:
       - name: Typecheck (whole app, incl. screens)
         run: npm run typecheck
 
-      - name: Unit tests (Moment contract, privacy filter, seed, time)
-        run: npm test
+      - name: Lint
+        run: npm run lint
+
+      - name: Unit tests (store, privacy filter, seed, note, time)
+        run: npm run test:unit
+
+      - name: Component and journey tests (App, Capture, WORLD)
+        run: npm run test:components
 
       - name: Bundle JS for Android and iOS
         run: npm run bundle:check
@@ -60,6 +66,10 @@ jobs:
 
       - name: Dependencies match the Expo SDK
         run: npx expo install --check
+
+      - name: expo-doctor (informational)
+        continue-on-error: true
+        run: npx expo-doctor@latest
 
       - name: No critical vulnerabilities
         run: npm audit --audit-level=critical

@@ -10,14 +10,13 @@ import {
   ActivityIndicator,
   FlatList,
   Image,
-  Platform,
   Pressable,
   RefreshControl,
-  StatusBar,
   StyleSheet,
   Text,
   View,
 } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { listPublicMoments } from '../data/moments';
 import { isSeedMoment } from '../data/seedMoments';
@@ -37,6 +36,8 @@ export default function WorldScreen({ reloadToken, onLookUp }: WorldScreenProps)
   const [moments, setMoments] = useState<Moment[]>([]);
   const [loadState, setLoadState] = useState<LoadState>('loading');
   const [refreshing, setRefreshing] = useState(false);
+  // Real insets on both platforms; replaces a fixed 64pt guess on iOS (LU-4).
+  const insets = useSafeAreaInsets();
 
   const load = useCallback(async () => {
     try {
@@ -87,7 +88,11 @@ export default function WorldScreen({ reloadToken, onLookUp }: WorldScreenProps)
         renderItem={({ item }) => <MomentCard moment={item} />}
         ListHeaderComponent={<Header onLookUp={onLookUp} />}
         ListEmptyComponent={<Empty />}
-        contentContainerStyle={[styles.list, moments.length === 0 && styles.listEmpty]}
+        contentContainerStyle={[
+          styles.list,
+          { paddingTop: insets.top + 16, paddingBottom: insets.bottom + 48 },
+          moments.length === 0 && styles.listEmpty,
+        ]}
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={refresh} tintColor={colours.muted} />
         }
@@ -164,9 +169,6 @@ const colours = {
   badge: '#ECE8DF',
 };
 
-// The blank Expo template has no safe-area provider; keep clear of the status bar.
-const TOP_INSET = Platform.OS === 'android' ? (StatusBar.currentHeight ?? 24) + 16 : 64;
-
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
@@ -179,9 +181,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 32,
   },
   list: {
-    paddingTop: TOP_INSET,
     paddingHorizontal: 20,
-    paddingBottom: 48,
   },
   listEmpty: {
     flexGrow: 1,

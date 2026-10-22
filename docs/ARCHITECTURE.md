@@ -6,8 +6,8 @@
 
 | Decision | Frozen choice |
 | --- | --- |
-| Mobile framework / version | Expo SDK 57.0.26 + React Native 0.86.3 + React 19.2.3 + TypeScript 6.0.3 |
-| Target device / run command | 實機 + Expo Go；`npm start` 後掃 QR（手機與電腦需同一 Wi-Fi）。無模擬器：此機器沒有 Xcode 或 Android Studio |
+| Mobile framework / version | **Expo SDK 58 + React Native 0.88**（2026-10-22 自 SDK 57.0.26 / RN 0.86.3 升級）。確切版本以 `package.json` / `package-lock.json` 為準，由 `.github/workflows/sync-deps.yml` 執行官方 `npx expo install expo@^58.0.0 --fix` 產生；目標 SDK 寫在 `.github/expo-sdk-target` |
+| Target device / run command | 實機 + Expo Go；`npm start` 後掃 QR（手機與電腦需同一 Wi-Fi；連不上改 `npm run start:tunnel`）。**Expo Go 必須是支援 SDK 58 的版本**：商店版在 SDK 58 發布（2026-10-15）後數週內更新；之前 Android 可由 expo.dev/go 安裝，iOS 需 `eas go`（Apple Developer 帳號）。無模擬器：此機器沒有 Xcode 或 Android Studio |
 | Image storage and URI lifecycle | P0 使用 picker URI，僅保證同一 app session 可顯示 |
 | Moment persistence / public query | P0 單一 in-memory store；無跨裝置共享或 durable persistence |
 | Unique contract file | `src/types/moment.ts`，B 維護 |
@@ -21,14 +21,14 @@
 
 | Item | Value |
 | --- | --- |
-| Node | v24.21.0（nvm，user-local；`~/.nvm`） |
+| Node | v24.21.0（nvm，user-local；`~/.nvm`）。SDK 58 需要 Node 22.13+ 或 24.3+（不支援奇數版） |
 | Package manager | **npm 11.19.0，唯一** —— 只提交 `package-lock.json`。不要用 pnpm 或 yarn：demo 機的 `node_modules` 是 npm 裝的並已實機驗證，`npx expo install` 也只寫 `package-lock.json`。`pnpm-lock.yaml` 已從 repo 移除並列入 `.gitignore` |
 | Template | `create-expo-app@latest --template blank-typescript` |
 | Scaffold method | 先在 repo 外建立，再只複製 `App.tsx`、`index.ts`、`app.json`、`package.json`、`tsconfig.json`、`.gitignore`、`assets/`，保留原有 Markdown |
-| Image picker | `expo-image-picker@~57.0.20`（`npx expo install` 選定的 SDK 57 相容版本） |
-| Typecheck | `npx tsc --noEmit` 通過 |
+| Image picker | `expo-image-picker`，版本由 `npx expo install` 依 SDK 決定（SDK 57 時為 `~57.0.20`）；權限文字設定在 `app.json` plugins |
+| Typecheck / lint / tests | `npm run check`（typecheck + `expo lint` + node unit tests + jest-expo component/journey tests + Android/iOS bundle），CI 每次 push 執行 |
 | Target phone | **Demo 機：Pixel 10（Android）**。2026-10-04 實機 Expo Go 開啟 baseline 成功。iPhone 17 Pro 也在手上，但不是驗收標的 |
-| Safe area | 無 `react-native-safe-area-context`；`WorldScreen` 自行處理頂部邊距：Android 取 `StatusBar.currentHeight + 16`（demo 路徑，向系統拿真實高度），iOS 寫死 `64`（未在動態島機型實測） |
+| Safe area | `react-native-safe-area-context`：`App.tsx` 包 `SafeAreaProvider`；Landing/Capture 用其 `SafeAreaView`，WORLD 用 `useSafeAreaInsets`。取代 RN 已棄用且只在 iOS 生效的 `SafeAreaView` 與 WORLD 寫死的 64pt（LU-4，2026-10-22） |
 
 Setup / run：
 
@@ -42,7 +42,7 @@ npm run check                                       # typecheck + unit tests + A
 
 Engineering records（baseline、issues、test report、startup runbook）在 [docs/engineering/](engineering/)；session 紀錄在 `.harness/SESSION_LOG.md`。
 
-已知問題：此機器原本沒有 Node、Homebrew 或 nvm，Node 以 nvm 安裝，安裝程式已在 `~/.zshrc` 附加 nvm 載入片段。`npm audit` 回報 23 個 transitive 相依套件弱點，屬 Expo 模板預設狀態，P0 不處理。
+已知問題：此機器原本沒有 Node、Homebrew 或 nvm，Node 以 nvm 安裝，安裝程式已在 `~/.zshrc` 附加 nvm 載入片段。`npm audit` 在 SDK 57 時回報 23 個 transitive 相依套件弱點，屬 Expo 模板預設狀態；CI 的 dependency-health job 對 critical 等級直接失敗（LU-11）。
 
 ## Ownership boundary
 

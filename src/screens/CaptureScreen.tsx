@@ -1,8 +1,9 @@
 import { useRef, useState } from 'react';
 import {
   Image, Keyboard, KeyboardAvoidingView, Linking, Platform, Pressable,
-  SafeAreaView, ScrollView, StyleSheet, Text, TextInput, View,
+  ScrollView, StyleSheet, Text, TextInput, View,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import * as ImagePicker from 'expo-image-picker';
 import { NOTE_MAX_LENGTH, type CreateMomentInput, type Moment, type Visibility } from '../types/moment';
 import { CaptureButton } from '../components/capture/CaptureButton';
