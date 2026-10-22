@@ -23,7 +23,10 @@ has() {
 }
 
 runtime=(react-native-safe-area-context)
-tooling=(jest-expo jest @testing-library/react-native @types/jest eslint eslint-config-expo)
+tooling=(jest-expo jest @jest/globals @testing-library/react-native eslint eslint-config-expo)
+# No longer used: TypeScript 6 stopped auto-loading @types/*, so tests import
+# their globals from @jest/globals instead.
+retired=(@types/jest)
 
 missing=()
 for name in "${runtime[@]}"; do has "$name" || missing+=("$name"); done
@@ -33,7 +36,14 @@ if [ "${#missing[@]}" -gt 0 ]; then
 fi
 
 missing=()
-for name in "${tooling[@]}"; do has "$name" || missing+=("$name"); done
+for name in "${tooling[@]}"; do
+  if has "$name"; then continue; fi
+  # Jest packages are released in lockstep; match the installed jest.
+  if [ "$name" = "@jest/globals" ] && [ -f node_modules/jest/package.json ]; then
+    name="@jest/globals@$(node -p "require('jest/package.json').version")"
+  fi
+  missing+=("$name")
+done
 if [ "${#missing[@]}" -gt 0 ]; then
   # Pin the renderer to the installed React so npm does not pull a newer
   # react-test-renderer whose peer range rejects this React.
@@ -42,6 +52,31 @@ if [ "${#missing[@]}" -gt 0 ]; then
   npx expo install "${missing[@]}" "react-test-renderer@$react_version" -- --save-dev
 fi
 
+for name in "${retired[@]}"; do
+  if has "$name"; then npm uninstall --no-audit --no-fund "$name"; fi
+done
+
 # Align every Expo-managed package with the SDK.
 npx expo install --fix
+
+# `expo install` ignores --save-dev for packages it knows (jest-expo, jest,
+# eslint-config-expo, react-test-renderer), so move all tooling into
+# devDependencies, keep both maps sorted, and let npm rewrite the lockfile.
+node -e '
+const fs = require("fs");
+const p = JSON.parse(fs.readFileSync("package.json", "utf8"));
+p.devDependencies = p.devDependencies || {};
+for (const name of process.argv.slice(1)) {
+  if (p.dependencies && p.dependencies[name]) {
+    p.devDependencies[name] = p.dependencies[name];
+    delete p.dependencies[name];
+  }
+}
+const sorted = (o) => Object.fromEntries(Object.entries(o).sort(([a], [b]) => a.localeCompare(b)));
+p.dependencies = sorted(p.dependencies);
+p.devDependencies = sorted(p.devDependencies);
+fs.writeFileSync("package.json", JSON.stringify(p, null, 2) + "\n");
+' "${tooling[@]}" react-test-renderer
+npm install --no-audit --no-fund
+
 npx expo install --check

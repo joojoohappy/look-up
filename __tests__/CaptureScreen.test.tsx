@@ -2,6 +2,7 @@
  * Capture form behaviour that the journey test does not reach: validation,
  * permission denial, double taps and a failing submit.
  */
+import { expect, jest, test } from '@jest/globals';
 import { fireEvent, render, screen } from '@testing-library/react-native';
 import * as ImagePicker from 'expo-image-picker';
 
@@ -65,7 +66,7 @@ test('public submit sends the exact input once and then opens WORLD', async () =
 });
 
 test('a rejected submit shows the reason and keeps the form for a retry', async () => {
-  const onSubmit = jest.fn<Promise<Moment>, [CreateMomentInput]>()
+  const onSubmit = jest.fn<Submit>()
     .mockRejectedValueOnce(new Error('Keep the note to 50 characters or fewer.'))
     .mockImplementation(async (input) => savedMoment(input));
   const { onDone, ui } = setup(onSubmit);

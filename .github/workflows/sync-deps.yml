@@ -27,17 +27,19 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v5
         with:
           node-version: 24
 
-      - name: Install current lockfile
-        run: npm ci
+      # npm install, not ci: this job exists to rewrite the lockfile, and a
+      # branch may arrive with package.json ahead of it.
+      - name: Install current dependencies
+        run: bash scripts/ci-run.sh "npm install" npm install --no-audit --no-fund
 
       - name: Upgrade SDK and add tooling
-        run: bash scripts/sync-deps.sh
+        run: bash scripts/ci-run.sh "sync-deps" bash scripts/sync-deps.sh
 
       - name: Commit package.json and package-lock.json
         run: |
@@ -53,20 +55,20 @@ jobs:
           git log -1 --stat
 
       - name: Clean install from the new lockfile
-        run: npm ci
+        run: bash scripts/ci-run.sh "npm ci" npm ci
 
       - name: Typecheck
-        run: npm run typecheck
+        run: bash scripts/ci-run.sh "Typecheck" npm run typecheck
 
       - name: Lint
-        run: npm run lint
+        run: bash scripts/ci-run.sh "Lint" npm run lint
 
       - name: Tests
-        run: npm test
+        run: bash scripts/ci-run.sh "Tests" npm test
 
       - name: Bundle JS for Android and iOS
-        run: npm run bundle:check
+        run: bash scripts/ci-run.sh "Bundle" npm run bundle:check
 
       - name: expo-doctor (informational)
         continue-on-error: true
-        run: npx expo-doctor@latest
+        run: bash scripts/ci-run.sh "expo-doctor" npx expo-doctor@latest

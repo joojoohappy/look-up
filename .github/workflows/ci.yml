@@ -1,8 +1,12 @@
 # Quality gates for LOOK UP. See docs/engineering/RELIABILITY.md.
 #
-# A green run proves the code installs, typechecks, passes the data-layer tests
-# and bundles for Android and iOS. It does NOT prove the app runs on a phone:
-# Expo Go on a physical device is still the acceptance gate (docs/DEMO.md).
+# A green run proves the code installs, typechecks, lints, passes the unit and
+# component tests and bundles for Android and iOS. It does NOT prove the app
+# runs on a phone: Expo Go on a device is still the acceptance gate
+# (docs/engineering/DEVICE_CHECKS.md).
+#
+# Every step runs through scripts/ci-run.sh, which republishes a failing step's
+# output as an annotation readable on the PR page.
 name: CI
 
 on:
@@ -20,56 +24,56 @@ concurrency:
 
 jobs:
   verify:
-    name: Install, typecheck, test, bundle
+    name: Install, typecheck, lint, test, bundle
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v5
         with:
           node-version: 24 # matches docs/ARCHITECTURE.md
           cache: npm
 
       - name: Install from lockfile
-        run: npm ci
+        run: bash scripts/ci-run.sh "npm ci" npm ci
 
-      - name: Typecheck (whole app, incl. screens)
-        run: npm run typecheck
+      - name: Typecheck (whole app, incl. screens and tests)
+        run: bash scripts/ci-run.sh "Typecheck" npm run typecheck
 
       - name: Lint
-        run: npm run lint
+        run: bash scripts/ci-run.sh "Lint" npm run lint
 
       - name: Unit tests (store, privacy filter, seed, note, time)
-        run: npm run test:unit
+        run: bash scripts/ci-run.sh "Unit tests" npm run test:unit
 
       - name: Component and journey tests (App, Capture, WORLD)
-        run: npm run test:components
+        run: bash scripts/ci-run.sh "Component tests" npm run test:components
 
       - name: Bundle JS for Android and iOS
-        run: npm run bundle:check
+        run: bash scripts/ci-run.sh "Bundle" npm run bundle:check
 
   dependency-health:
     name: Dependency health
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v5
         with:
           node-version: 24
           cache: npm
 
       - name: Install from lockfile
-        run: npm ci
+        run: bash scripts/ci-run.sh "npm ci" npm ci
 
       - name: Dependencies match the Expo SDK
-        run: npx expo install --check
+        run: bash scripts/ci-run.sh "expo install --check" npx expo install --check
 
       - name: expo-doctor (informational)
         continue-on-error: true
-        run: npx expo-doctor@latest
+        run: bash scripts/ci-run.sh "expo-doctor" npx expo-doctor@latest
 
       - name: No critical vulnerabilities
-        run: npm audit --audit-level=critical
+        run: bash scripts/ci-run.sh "npm audit" npm audit --audit-level=critical

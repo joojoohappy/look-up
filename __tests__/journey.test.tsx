@@ -4,6 +4,7 @@
  * (jest.setup.js). Each test uses its own note text because the store is a
  * module singleton shared within this file.
  */
+import { expect, test } from '@jest/globals';
 import { fireEvent, render, screen } from '@testing-library/react-native';
 
 import App from '../App';
