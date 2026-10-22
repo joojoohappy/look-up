@@ -31,21 +31,22 @@ Status words: **fixed (code)** = changed and unit-tested where possible; **devic
 ### LU-5 — No lint, no component/E2E tests · open
 - ESLint, jest-expo and React Native Testing Library are not in the lockfile; adding them needs a lockfile update (`npx expo lint`, `npx expo install jest-expo jest @testing-library/react-native -- --save-dev`). Maestro is a reasonable fit for the Expo Go E2E path later.
 
-### LU-6 — Standalone builds will need camera permission text · open, post-MVP
-- Expo Go supplies its own permission strings. For a first EAS build, add `expo-image-picker` to `app.json` `plugins` with a `cameraPermission` message and confirm the iOS prompt.
+### LU-6 — Standalone builds will need camera permission text · fixed (config)
+- `app.json` now configures the `expo-image-picker` plugin with camera and photo-library texts and `microphonePermission: false` (images only). Expo Go ignores these and shows its own; they take effect in the first EAS/development build.
 
 ## P3
 
 ### LU-7 — "NaN d ago" for an unparseable timestamp · fixed (code), unit-tested
 - Reproduced with the original function: `timeAgo('not a date')` → `"NaN d ago"`. Moved to `src/lib/time.ts`, returns `null`; the card then shows only the location. Regression test in `tests/time.test.js`. Future timestamps (clock skew) now read "just now" explicitly.
 
-### LU-8 — Note length counts UTF-16 code units · open, product question
-- An emoji counts as 2 of the 50, and `text.slice(0, 50)` can cut a surrogate pair in half. Whether "50 字" means characters as seen (graphemes) is for the owners to decide; CJK characters already count as one each (tested).
+### LU-8 — Note length counted UTF-16 units · fixed (code), unit-tested
+- An emoji counted as 2 of the 50 and `text.slice(0, 50)` could cut one in half. Owner asked for all issues to be closed, so the rule is now **Unicode code points** (`src/lib/note.ts`, shared by store and screen; DATA-MODEL.md updated). ZWJ emoji sequences still count as several — Hermes has no `Intl.Segmenter`. Regression tests in `tests/note.test.js`; reverting to `.length` fails 3 of them.
 
-### LU-9 — Gboard keeps showing composing text past 50 · open, already documented in DEMO.md
+### LU-9 — Gboard keeps showing composing text past 50 · fixed (code), device-unverified
+- DEMO.md attributed it to two gates (`maxLength` + slice). `maxLength` is removed (it also counted UTF-16, contradicting LU-8); `clampNote` is the single gate. Retest on the Pixel 10 with Gboard.
 
-### LU-10 — Android back during an in-flight submit leaves without confirmation · open
-- The store write completes (it's synchronous in practice), but the user lands on the landing screen with no message. Tiny window; acceptable for the prototype.
+### LU-10 — Android back during an in-flight submit · won't fix (no reachable window)
+- `submitMoment` has no `await` before it stores, so the promise settles in the same tick as the tap; there is no frame in which a back gesture can land mid-submit. Revisit when submission goes over the network.
 
 ### LU-11 — 23 transitive npm advisories (recorded 2026-10-04) · open
 - Could not re-run here. The CI `dependency-health` job fails on any **critical** advisory.

@@ -5,7 +5,7 @@
 **Goal:** audit the repo, establish a reproducible baseline, fix real P0/P1 defects, add a test and CI foundation, leave records a later session can resume from.
 
 **Changed**
-- `src/screens/WorldScreen.tsx` — header shows the existing `onLookUp` route ("Look up ↑"); empty state no longer carries its own button; uses `src/lib/time.ts`. (Person B's file; edited under the QA mandate, flagged for B's review.)
+- `src/screens/WorldScreen.tsx` — header shows the existing `onLookUp` route ("Look up ↑"); empty state no longer carries its own button; uses `src/lib/time.ts`. (Owner waived file ownership on 2026-10-22: "不要理 person B".)
 - `src/lib/time.ts` — new pure `timeAgo(createdAt, now)`; returns `null` for bad input.
 - `package.json` — scripts `typecheck`, `test`, `bundle:check`, `check`. Dependencies untouched; lockfile untouched.
 - `tsconfig.test.json`, `tests/*.js` — 15 tests on the RN-free modules, Node built-in runner.
@@ -35,7 +35,6 @@
 1. Push the branch (or apply the patch) and look at the first CI run.
 2. Decide LU-2: upgrade to SDK 58 vs. hold Expo Go updates.
 3. On an iPhone, verify LU-1; on the failing phone, follow RELIABILITY.md#startup-runbook and record the error for LU-3.
-4. Person B reviews the WorldScreen change (ownership).
 
 **Open issues:** LU-2, LU-3, LU-4, LU-5, LU-6, LU-8–LU-11 (ISSUES.md).
 

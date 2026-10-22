@@ -23,7 +23,7 @@ Use one tested phone, a real photo ready to take or pick, and a short note. Seed
 
 ## Known issues（不擋 demo）
 
-- Android Gboard 在 note 達到 50 字後仍會繼續顯示組字中的文字，但欄位已截斷、提交也被擋下，計數正常。成因是 `maxLength` 與 `onChangeText` 的 slice 重複把關。
+- ~~Android Gboard 在 note 達到 50 字後仍會繼續顯示組字中的文字~~ —— 2026-10-22 已移除 `maxLength`，只留 `clampNote` 一道把關（LU-9）。**尚未在 Pixel 10 重測**，demo 前請確認。
 
 ## Acceptance checklist
 
