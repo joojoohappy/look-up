@@ -33,25 +33,46 @@ export type WorldScreenProps = {
 
 type LoadState = 'loading' | 'ready' | 'error';
 
+/** The public query, with failure turned into null for the caller to show. */
+function fetchPublicMoments(): Promise<Moment[] | null> {
+  return listPublicMoments().then(
+    (moments) => moments,
+    () => null,
+  );
+}
+
 export default function WorldScreen({ reloadToken, onLookUp }: WorldScreenProps) {
   const [moments, setMoments] = useState<Moment[]>([]);
   const [loadState, setLoadState] = useState<LoadState>('loading');
   const [refreshing, setRefreshing] = useState(false);
 
-  const load = useCallback(async () => {
-    try {
-      setMoments(await listPublicMoments());
+  const apply = useCallback((result: Moment[] | null) => {
+    if (result) {
+      setMoments(result);
       setLoadState('ready');
-    } catch {
+    } else {
       setLoadState('error');
     }
   }, []);
 
+  /** Pull-to-refresh and "Try again". */
+  const load = useCallback(async () => {
+    apply(await fetchPublicMoments());
+  }, [apply]);
+
   // Reloads on mount and whenever the integrator bumps reloadToken, so a new
-  // submission shows up without a manual refresh.
+  // submission shows up without a manual refresh. State is set in the promise
+  // callback, never synchronously in the effect, and a result that arrives
+  // after unmount or after a newer reload is dropped.
   useEffect(() => {
-    load();
-  }, [load, reloadToken]);
+    let current = true;
+    void fetchPublicMoments().then((result) => {
+      if (current) apply(result);
+    });
+    return () => {
+      current = false;
+    };
+  }, [apply, reloadToken]);
 
   const refresh = useCallback(async () => {
     setRefreshing(true);

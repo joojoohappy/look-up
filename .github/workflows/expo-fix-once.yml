@@ -1,0 +1,35 @@
+# ONE-OFF: aligns SDK 57 packages with what Expo expects
+# (`expo install --check`: expo@57.0.26, expected ~57.0.31) and commits the
+# lockfile. Deleted in the next commit; the npm registry is unreachable from
+# the machine that wrote this, so the official command runs here instead.
+name: Expo install --fix (one-off)
+
+on:
+  push:
+    branches: ['qa/**']
+    paths: [.github/workflows/expo-fix-once.yml]
+
+permissions:
+  contents: write
+
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+      - run: bash scripts/ci-run.sh "npm ci" npm ci
+      - run: bash scripts/ci-run.sh "expo install --fix" npx expo install --fix
+      - run: bash scripts/ci-run.sh "expo install --check" npx expo install --check
+      - name: Commit
+        run: |
+          if git diff --quiet -- package.json package-lock.json; then echo "Nothing to change."; exit 0; fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add package.json package-lock.json
+          git commit -m "Align SDK 57 packages with expo install --check"
+          git push
+          git diff HEAD~1 -- package.json
