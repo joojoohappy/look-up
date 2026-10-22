@@ -50,3 +50,10 @@ Status words: **fixed (code)** = changed and unit-tested where possible; **devic
 
 ### LU-11 — 23 transitive npm advisories (recorded 2026-10-04) · open
 - Could not re-run here. The CI `dependency-health` job fails on any **critical** advisory.
+
+### LU-12 — Expo SDK 57 patch drift · fixed (CI-verified)
+- `expo install --check` (first CI run): `expo@57.0.26 - expected version: ~57.0.31`, inherited from `main`. A one-off workflow ran `npx expo install --fix` on GitHub Actions (commit `ac081d0`) and was removed (`b6680a5`). CI 39767842417 green.
+
+### LU-13 — WORLD set state synchronously in an effect; stale loads could apply · fixed (code), lint-verified
+- Found by `react-hooks/set-state-in-effect` in the first lint run. The mount/reload effect now applies the result in the promise callback behind a cancellation flag, so a load finishing after unmount or after a newer reload is dropped.
+

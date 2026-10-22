@@ -27,8 +27,14 @@ Tests use only what the lockfile already has (TypeScript + Node's built-in runne
 | Full suite after fixes (`npm test`) | 15 pass, 0 fail |
 | Syntax check, all 11 `.ts/.tsx` files after fixes | 0 diagnostics |
 
+## Results — GitHub Actions (ubuntu-latest, Node 24)
+
+| Run | Branch @ commit | Result |
+| --- | --- | --- |
+| CI 39767842417 | `qa/baseline-and-fixes` @ `b6680a5` (SDK 57.0.31) | **all green**: `npm ci`, full typecheck incl. screens, unit tests, Android + iOS JS bundle, `expo install --check`, `npm audit --audit-level=critical` |
+| CI 39766886308 | same branch @ `6e70b28` | first real typecheck + bundle: green; `expo install --check` red (`expo@57.0.26, expected ~57.0.31`) → fixed by `ac081d0` (LU-12) |
+
 ## Not executed — do not read as passed
 
-- `npm run typecheck` on the whole app, `npm run bundle:check`, `npm audit`, `expo install --check`: blocked by registry access in the sandbox. They run in CI.
-- CI workflow: written and YAML-validated, **never run yet**.
+- Nothing runs on a phone in CI. Device status is tracked in DEVICE_CHECKS.md (upgrade branch) / ISSUES.md.
 - Any device run: no phone or simulator available. LU-1 is device-unverified.
