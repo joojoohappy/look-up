@@ -40,6 +40,10 @@ yarn-error.*
 # typescript
 *.tsbuildinfo
 
+# quality checks (npm test / npm run bundle:check)
+.test-build/
+.bundle-check/
+
 # generated native folders
 /ios
 /android
