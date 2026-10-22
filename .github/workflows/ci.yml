@@ -24,42 +24,42 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v5
         with:
           node-version: 24 # matches docs/ARCHITECTURE.md
           cache: npm
 
       - name: Install from lockfile
-        run: npm ci
+        run: bash scripts/ci-run.sh "npm ci" npm ci
 
       - name: Typecheck (whole app, incl. screens)
-        run: npm run typecheck
+        run: bash scripts/ci-run.sh "Typecheck" npm run typecheck
 
       - name: Unit tests (Moment contract, privacy filter, seed, time)
-        run: npm test
+        run: bash scripts/ci-run.sh "Unit tests" npm test
 
       - name: Bundle JS for Android and iOS
-        run: npm run bundle:check
+        run: bash scripts/ci-run.sh "Bundle" npm run bundle:check
 
   dependency-health:
     name: Dependency health
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v5
         with:
           node-version: 24
           cache: npm
 
       - name: Install from lockfile
-        run: npm ci
+        run: bash scripts/ci-run.sh "npm ci" npm ci
 
       - name: Dependencies match the Expo SDK
-        run: npx expo install --check
+        run: bash scripts/ci-run.sh "expo install --check" npx expo install --check
 
       - name: No critical vulnerabilities
-        run: npm audit --audit-level=critical
+        run: bash scripts/ci-run.sh "npm audit" npm audit --audit-level=critical
