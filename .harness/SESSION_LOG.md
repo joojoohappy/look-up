@@ -67,3 +67,17 @@
 **Possible harness lessons (candidates only)**
 - When no machine in reach can install packages, delegate lockfile changes to CI with the official command instead of hand-writing versions.
 - Keep a pre-upgrade branch while store builds of a runtime (Expo Go) lag the SDK.
+
+## 2026-10-22 (session 2, continued) — GitHub linked, pushed, CI to green
+
+**Changed:** pushed `qa/baseline-and-fixes` (PR #2 → `main`) and `upgrade/expo-sdk-58`. `scripts/ci-run.sh` republishes failing step output as annotations (raw job logs are not reachable from the sandbox). actions/checkout and setup-node v5. Tests import `@jest/globals` (TypeScript 6 no longer auto-loads `@types/*`). sync-deps moves tooling to devDependencies. WORLD load effect fixed (LU-13). One-off `expo install --fix` for SDK 57 drift (LU-12), workflow removed after it ran.
+
+**Verification (executed, GitHub Actions):** CI 39767842417 SDK 57 all green; CI 39767859131 SDK 58 all green: typecheck, lint, 20 unit + 12 component/journey tests, Android + iOS bundle, expo install --check, expo-doctor, critical audit.
+
+**Status:** CI-verified on both branches. Not device-verified. Not merged, not deployed.
+
+**Human intervention:** review/merge PR #2, then the SDK 58 PR; device checks per DEVICE_CHECKS.md (iPhone LU-1/LU-4/LU-8, Pixel LU-9); LU-3 needs the failing phone's error screen.
+
+**Possible harness lessons (candidates only)**
+- When CI logs are unreachable, make every step publish its own failure tail as an annotation; it turned three blind failures into one-line fixes.
+- TypeScript 6 `types` default is `[]`: import test globals explicitly instead of relying on `@types/*`.
