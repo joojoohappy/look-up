@@ -37,7 +37,10 @@ export NVM_DIR="$HOME/.nvm"; . "$NVM_DIR/nvm.sh"   # 新 shell 需先載入 nvm
 npm install
 npm start                                           # Expo Go 掃 QR
 npx tsc --noEmit                                    # typecheck
+npm run check                                       # typecheck + unit tests + Android/iOS bundle (also runs in CI)
 ```
+
+Engineering records（baseline、issues、test report、startup runbook）在 [docs/engineering/](engineering/)；session 紀錄在 `.harness/SESSION_LOG.md`。
 
 已知問題：此機器原本沒有 Node、Homebrew 或 nvm，Node 以 nvm 安裝，安裝程式已在 `~/.zshrc` 附加 nvm 載入片段。`npm audit` 回報 23 個 transitive 相依套件弱點，屬 Expo 模板預設狀態，P0 不處理。
 

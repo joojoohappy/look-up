@@ -1,0 +1,17 @@
+{
+  // Compiles only the React-Native-free modules so `node --test` can run them.
+  // Screens are covered by `npm run typecheck` and the bundle check, not here.
+  "compilerOptions": {
+    "strict": true,
+    "target": "ES2022",
+    "lib": ["ES2022"],
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "types": [],
+    "skipLibCheck": true,
+    "noEmitOnError": true,
+    "rootDir": ".",
+    "outDir": ".test-build"
+  },
+  "include": ["src/types/**/*.ts", "src/data/**/*.ts", "src/lib/**/*.ts"]
+}

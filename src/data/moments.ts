@@ -5,6 +5,7 @@
  * reload, and nothing is shared across devices. See docs/ARCHITECTURE.md.
  */
 
+import { noteLength } from '../lib/note';
 import { CreateMomentInput, Moment, NOTE_MAX_LENGTH } from '../types/moment';
 import { SEED_MOMENTS } from './seedMoments';
 
@@ -29,7 +30,7 @@ export async function submitMoment(input: CreateMomentInput): Promise<Moment> {
   if (!input.imageUri) {
     throw new Error('A photo is required.');
   }
-  if (input.note.length > NOTE_MAX_LENGTH) {
+  if (noteLength(input.note) > NOTE_MAX_LENGTH) {
     throw new Error(`Keep the note to ${NOTE_MAX_LENGTH} characters or fewer.`);
   }
 

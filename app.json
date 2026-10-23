@@ -20,6 +20,16 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "plugins": [
+      [
+        "expo-image-picker",
+        {
+          "cameraPermission": "LOOK UP uses the camera so you can take a photo of what you noticed.",
+          "photosPermission": "LOOK UP lets you choose a photo you took today.",
+          "microphonePermission": false
+        }
+      ]
+    ]
   }
 }

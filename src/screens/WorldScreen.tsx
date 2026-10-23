@@ -21,6 +21,7 @@ import {
 
 import { listPublicMoments } from '../data/moments';
 import { isSeedMoment } from '../data/seedMoments';
+import { timeAgo } from '../lib/time';
 import { Moment } from '../types/moment';
 
 export type WorldScreenProps = {
@@ -32,25 +33,46 @@ export type WorldScreenProps = {
 
 type LoadState = 'loading' | 'ready' | 'error';
 
+/** The public query, with failure turned into null for the caller to show. */
+function fetchPublicMoments(): Promise<Moment[] | null> {
+  return listPublicMoments().then(
+    (moments) => moments,
+    () => null,
+  );
+}
+
 export default function WorldScreen({ reloadToken, onLookUp }: WorldScreenProps) {
   const [moments, setMoments] = useState<Moment[]>([]);
   const [loadState, setLoadState] = useState<LoadState>('loading');
   const [refreshing, setRefreshing] = useState(false);
 
-  const load = useCallback(async () => {
-    try {
-      setMoments(await listPublicMoments());
+  const apply = useCallback((result: Moment[] | null) => {
+    if (result) {
+      setMoments(result);
       setLoadState('ready');
-    } catch {
+    } else {
       setLoadState('error');
     }
   }, []);
 
+  /** Pull-to-refresh and "Try again". */
+  const load = useCallback(async () => {
+    apply(await fetchPublicMoments());
+  }, [apply]);
+
   // Reloads on mount and whenever the integrator bumps reloadToken, so a new
-  // submission shows up without a manual refresh.
+  // submission shows up without a manual refresh. State is set in the promise
+  // callback, never synchronously in the effect, and a result that arrives
+  // after unmount or after a newer reload is dropped.
   useEffect(() => {
-    load();
-  }, [load, reloadToken]);
+    let current = true;
+    void fetchPublicMoments().then((result) => {
+      if (current) apply(result);
+    });
+    return () => {
+      current = false;
+    };
+  }, [apply, reloadToken]);
 
   const refresh = useCallback(async () => {
     setRefreshing(true);
@@ -84,8 +106,8 @@ export default function WorldScreen({ reloadToken, onLookUp }: WorldScreenProps)
         data={moments}
         keyExtractor={(moment) => moment.id}
         renderItem={({ item }) => <MomentCard moment={item} />}
-        ListHeaderComponent={<Header />}
-        ListEmptyComponent={<Empty onLookUp={onLookUp} />}
+        ListHeaderComponent={<Header onLookUp={onLookUp} />}
+        ListEmptyComponent={<Empty />}
         contentContainerStyle={[styles.list, moments.length === 0 && styles.listEmpty]}
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={refresh} tintColor={colours.muted} />
@@ -95,33 +117,45 @@ export default function WorldScreen({ reloadToken, onLookUp }: WorldScreenProps)
   );
 }
 
-function Header() {
+// The route back lives in the header, not only in the empty state: the demo
+// seed means WORLD is never empty, and iOS has no back gesture, so an
+// empty-state-only button left iPhone users stuck in WORLD.
+function Header({ onLookUp }: { onLookUp?: () => void }) {
   return (
     <View style={styles.header}>
-      <Text style={styles.title}>WORLD</Text>
+      <View style={styles.headerRow}>
+        <Text style={styles.title}>WORLD</Text>
+        {onLookUp ? (
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel="Look up again"
+            hitSlop={8}
+            onPress={onLookUp}
+            style={({ pressed }) => [styles.lookUp, pressed && styles.pressed]}
+          >
+            <Text style={styles.lookUpLabel}>Look up ↑</Text>
+          </Pressable>
+        ) : null}
+      </View>
       <Text style={styles.subtitle}>What other people saw when they looked up.</Text>
     </View>
   );
 }
 
-function Empty({ onLookUp }: { onLookUp?: () => void }) {
+function Empty() {
   return (
     <View style={styles.centred}>
       <Text style={styles.stateTitle}>Nothing here yet</Text>
       <Text style={styles.stateBody}>
         No one has left a moment in the world today. Yours would be the first.
       </Text>
-      {onLookUp ? (
-        <Pressable style={styles.button} onPress={onLookUp}>
-          <Text style={styles.buttonLabel}>Look up</Text>
-        </Pressable>
-      ) : null}
     </View>
   );
 }
 
 function MomentCard({ moment }: { moment: Moment }) {
   const seed = isSeedMoment(moment);
+  const when = timeAgo(moment.createdAt);
 
   return (
     <View style={styles.card}>
@@ -137,20 +171,9 @@ function MomentCard({ moment }: { moment: Moment }) {
         </View>
       ) : null}
       {moment.note ? <Text style={styles.note}>{moment.note}</Text> : null}
-      <Text style={styles.meta}>
-        {moment.location} · {timeAgo(moment.createdAt)}
-      </Text>
+      <Text style={styles.meta}>{when ? `${moment.location} · ${when}` : moment.location}</Text>
     </View>
   );
-}
-
-function timeAgo(createdAt: string): string {
-  const minutes = Math.floor((Date.now() - new Date(createdAt).getTime()) / 60_000);
-  if (minutes < 1) return 'just now';
-  if (minutes < 60) return `${minutes} min ago`;
-  const hours = Math.floor(minutes / 60);
-  if (hours < 24) return `${hours} hr ago`;
-  return `${Math.floor(hours / 24)} d ago`;
 }
 
 const colours = {
@@ -186,6 +209,26 @@ const styles = StyleSheet.create({
   },
   header: {
     marginBottom: 24,
+  },
+  headerRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  lookUp: {
+    minHeight: 44,
+    justifyContent: 'center',
+    paddingHorizontal: 14,
+    borderRadius: 999,
+    backgroundColor: colours.badge,
+  },
+  lookUpLabel: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: colours.text,
+  },
+  pressed: {
+    opacity: 0.7,
   },
   title: {
     fontSize: 13,

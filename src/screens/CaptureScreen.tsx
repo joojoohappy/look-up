@@ -6,6 +6,7 @@ import {
 import * as ImagePicker from 'expo-image-picker';
 import { NOTE_MAX_LENGTH, type CreateMomentInput, type Moment, type Visibility } from '../types/moment';
 import { CaptureButton } from '../components/capture/CaptureButton';
+import { clampNote, noteLength } from '../lib/note';
 
 export type CaptureScreenProps = {
   onCancel: () => void;
@@ -27,6 +28,7 @@ export function CaptureScreen({ onCancel, onSubmit, onDone }: CaptureScreenProps
   // State alone does not block two taps before React renders the disabled button.
   const operationInFlight = useRef(false);
   const busy = picking || submitting;
+  const noteCount = noteLength(note);
 
   async function choosePhoto(source: 'camera' | 'gallery') {
     if (operationInFlight.current) return;
@@ -78,7 +80,7 @@ export function CaptureScreen({ onCancel, onSubmit, onDone }: CaptureScreenProps
       setError('Choose a photo you can preview before leaving your moment.');
       return;
     }
-    if (note.length > NOTE_MAX_LENGTH) {
+    if (noteCount > NOTE_MAX_LENGTH) {
       setError(`Keep your note to ${NOTE_MAX_LENGTH} characters or fewer.`);
       return;
     }
@@ -150,11 +152,13 @@ export function CaptureScreen({ onCancel, onSubmit, onDone }: CaptureScreenProps
           <Text style={styles.hint}>For WORLD, choose a photo taken today.</Text>
           <View style={styles.noteHeader}>
             <Text style={styles.label}>Anything you want to leave here?</Text>
-            <Text style={styles.counter} accessibilityLabel={`${note.length} of ${NOTE_MAX_LENGTH} characters`}>{note.length}/{NOTE_MAX_LENGTH}</Text>
+            <Text style={styles.counter} accessibilityLabel={`${noteCount} of ${NOTE_MAX_LENGTH} characters`}>{noteCount}/{NOTE_MAX_LENGTH}</Text>
           </View>
+          {/* One gate only: clampNote. maxLength counted UTF-16 units and fought the
+              clamp, which is what left Gboard showing composing text past 50. */}
           <TextInput accessibilityLabel="Optional note" placeholder="A few words, or none at all." placeholderTextColor="#6A756E"
-            style={styles.input} multiline editable={!busy} maxLength={NOTE_MAX_LENGTH} value={note}
-            onChangeText={(text) => setNote(text.slice(0, NOTE_MAX_LENGTH))} textAlignVertical="top" />
+            style={styles.input} multiline editable={!busy} value={note}
+            onChangeText={(text) => setNote(clampNote(text))} textAlignVertical="top" />
           <Text style={styles.label}>Where would you like to leave it?</Text>
           {([
             ['public', 'Leave this in the world', 'Share this moment in WORLD.'],
