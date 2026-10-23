@@ -1,34 +1,52 @@
-# LOOK UP
+# Look up
 
 **Every day looks the same until you start looking.**
+每天看起來都一樣，直到你開始抬頭看。
 
-LOOK UP 是兩人、120 分鐘 Hackathon 的 mobile app functional prototype。它邀請人先觀察真實世界，再拍下一個 moment、留下最多 50 字，並透過 WORLD 看見其他人的當下。AI 只協助開發，不是使用者功能。
+Look up 是一個免費、免註冊的 iOS app：抬頭看看天空，拍下來，留一句話，然後看看世界各地的人此刻眼中的天空。沒有按讚、追蹤、留言或排名，只有大家各自看見的當下。
 
-## 開始前
+*Look up is a free, account-free iOS app for noticing the sky: take a photo, leave a few words, and see what people around the world are looking up at right now. No likes, follows, comments or rankings.*
 
-1. 兩位開發者一起讀 [PROJECT.md](PROJECT.md)、[MVP.md](MVP.md)、[AGENTS.md](AGENTS.md)。
-2. 先照 [docs/BUILD-PLAN.md](docs/BUILD-PLAN.md) 用 Expo + React Native + TypeScript 建立**一次**可在手機跑的共同基底；若兩人要換 stack，開發前一起修改決策。
-3. 10 分鐘內確認唯一的 Moment contract 位置與提交介面，記入 [docs/DATA-MODEL.md](docs/DATA-MODEL.md)。
-4. 先使用 [scaffold prompt](prompts/00-scaffold.md) 建立一次共同基底；Person A 與 B 再各用自己的 [prompt](prompts/)，各自分支或 worktree 開發；依 integration prompt 合併，最後 freeze demo。
+## 現況
 
-## 文件導覽
+| | |
+| --- | --- |
+| 階段 | v1 開發中。2026-10 的黑客松原型已完成並在 iPhone 上驗證；正式版目標 2026 年 12 月下旬送審 App Store |
+| 規格 | [docs/SPEC.md](docs/SPEC.md) |
+| 進度 | [GitHub milestones](https://github.com/joojoohappy/look-up/milestones)、[issues](https://github.com/joojoohappy/look-up/issues) |
+| 品質 | 每次 push 都跑 CI：型別檢查、lint、單元與元件測試、Android/iOS 打包、相依套件檢查 |
 
-- [PROJECT.md](PROJECT.md)：目的與原則
-- [MVP.md](MVP.md)：120 分鐘範圍與完成定義，開發時優先
-- [AGENTS.md](AGENTS.md)：AI 協作和檔案 ownership
-- [docs/PRODUCT.md](docs/PRODUCT.md)：長期產品規格
-- [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)：待 freeze 的技術決策和整合邊界
-- [docs/BUILD-PLAN.md](docs/BUILD-PLAN.md)：App 新手的 stack、檔案邊界和分支順序
-- [docs/DATA-MODEL.md](docs/DATA-MODEL.md)：唯一 contract 規則
-- [docs/DEMO.md](docs/DEMO.md)：60 秒展示及驗收
-- [prompts/](prompts/)：共同 scaffold、Person A、Person B、整合、demo freeze
+## 核心體驗
 
-共同 Expo scaffold 已建立並提交到 `main`（原為 Expo SDK 57 + React Native 0.86 + TypeScript，含 `expo-image-picker`），**SDK 57 版已在實機 Expo Go 開啟驗證通過**。2026-10-22 起升級為 **Expo SDK 58**（branch `upgrade/expo-sdk-58`）；手機上的 Expo Go 必須支援 SDK 58，SDK 58 版尚未實機驗證，見 [docs/engineering/DEVICE_CHECKS.md](docs/engineering/DEVICE_CHECKS.md)。唯一的 Moment contract 也在 `main`。實際版本與執行指令見 [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)。
+1. **WORLD**：打開就看到今天世界各地的天空，可以按日期回顧、按天空種類篩選。
+2. **分享**：拍一張今天的天空，選填一句話（50 字內）、城市、標籤、一個社群連結，選擇公開或只留給自己。
+3. **我的**：自己的天空紀錄；私人的只存在自己的手機。
 
-WORLD 與 `App.tsx` 的整合也已在 `main`：submit 會自動讓 WORLD 重載。**Person B 是 integrator**，只有 B 修改 `App.tsx`、`index.ts`、`package.json` 與 shared config。
+完整功能、隱私原則與「不做什麼」見 [規格](docs/SPEC.md)。
 
-三個畫面都已接上：landing → capture → WORLD，全在 `App.tsx` 的 state machine 裡，無 navigation library。Demo 機是 **Pixel 10**；Android 返回手勢已接管，不會中途退出 app 清掉 in-memory store。
+## 技術
 
-**端對端驗收已於 Pixel 10 通過**：拍真實照片 → 預覽 → 寫 note → 公開提交 → 同一張照片出現在 WORLD 最上方；同一輪的 private 投稿確認**不會**出現在 WORLD。剩下的是 demo freeze 與連續三次實機演練，見 [docs/DEMO.md](docs/DEMO.md)。
+Expo SDK 58 · React Native 0.88 · TypeScript · Firebase（v1 開發中）· Jest + React Native Testing Library · GitHub Actions
 
-**實機測試步驟（Windows 電腦 + iPhone / Pixel）**：[docs/engineering/DEVICE_CHECKS.md](docs/engineering/DEVICE_CHECKS.md)。
+## 在手機上執行
+
+```bash
+git clone https://github.com/joojoohappy/look-up.git
+cd look-up
+npm ci
+npm start   # 用 Expo Go 掃 QR code
+```
+
+iPhone 需要電腦和 Expo Go 登入同一個 Expo 帳號。完整步驟：[docs/engineering/DEVICE_CHECKS.md](docs/engineering/DEVICE_CHECKS.md)。
+
+開發檢查：`npm run check`（型別、lint、測試、打包）。
+
+## 文件
+
+| 文件 | 給誰 |
+| --- | --- |
+| [docs/SPEC.md](docs/SPEC.md) | 產品規格，所有功能以此為準 |
+| [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | 目前程式架構與版本 |
+| [docs/engineering/](docs/engineering/) | 品質紀錄：問題清單、測試報告、穩定性、實機測試步驟 |
+| [docs/hackathon/](docs/hackathon/) | 2026-10 黑客松原型的範圍、分工與簡報（歷史紀錄） |
+| [AGENTS.md](AGENTS.md) | 給在這個 repo 工作的 AI 助手的規則 |

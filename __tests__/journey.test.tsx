@@ -1,6 +1,6 @@
 /**
  * The demo path end to end, through the real App, screens and in-memory store
- * (MVP.md "完成定義"). Only the native picker and safe-area are mocked
+ * (the hackathon definition of done, docs/hackathon/MVP.md). Only the native picker and safe-area are mocked
  * (jest.setup.js). Each test uses its own note text because the store is a
  * module singleton shared within this file.
  */

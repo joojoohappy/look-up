@@ -21,9 +21,9 @@ Status words: **fixed (code)** = changed and unit-tested where possible; **devic
 - **Result:** Expo 58.0.17, React Native 0.88.0, React 19.3.0, expo-image-picker 58.0.10, react-native-safe-area-context 5.10.1 (lockfile). CI 39767859131 green.
 - **Caveat:** until the store Expo Go ships SDK 58, an SDK 58 project will not open in it. `qa/baseline-and-fixes` stays on SDK 57 for device testing in the meantime (DEVICE_CHECKS.md step 2).
 
-### LU-3 — App opened on one collaborator's phone but not another · open, root cause unconfirmed
+### LU-3 — App opened on one collaborator's phone but not another · explained (iOS Expo Go sign-in rule), documented
 - No logs from the failing device exist in the repo. Ranked hypotheses and the diagnostic runbook are in `RELIABILITY.md#startup-runbook`.
-- Only cause with repo evidence: a **signed-in** Expo Go refuses an anonymous CLI (commit `f298882`, BUILD-PLAN.md step 1).
+- **Likely root cause found 2026-10-23 (device evidence):** on a physical **iPhone**, Expo Go requires Expo CLI and Expo Go to be signed in to the same Expo account — even when neither is signed in it refuses ("You need to be signed in to Expo Go and Expo CLI"). Android is exempt. A Pixel opening and an iPhone failing fits exactly. Fix and Windows login workaround: DEVICE_CHECKS.md step 0. Confirmed on the owner's iPhone after signing both sides in.
 - Not causes: no backend, no `localhost` URLs, no env vars, no network calls in app code.
 - What changed to make the next failure diagnosable: `npm run start:tunnel` for networks that block phone↔PC traffic, and DEVICE_CHECKS.md step 2 maps each Expo Go error to its fix. Cannot be closed without the failing phone's error screen.
 
