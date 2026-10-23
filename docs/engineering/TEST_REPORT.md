@@ -36,5 +36,5 @@ Tests use only what the lockfile already has (TypeScript + Node's built-in runne
 
 ## Not executed — do not read as passed
 
-- Nothing runs on a phone in CI. Device status is tracked in DEVICE_CHECKS.md (upgrade branch) / ISSUES.md.
+- Nothing runs on a phone in CI. Device steps and results: [DEVICE_CHECKS.md](DEVICE_CHECKS.md).
 - Any device run: no phone or simulator available. LU-1 is device-unverified.
