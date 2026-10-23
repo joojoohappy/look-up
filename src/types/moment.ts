@@ -1,5 +1,6 @@
 /**
- * The single Moment contract for LOOK UP. See docs/DATA-MODEL.md.
+ * The single Moment contract for LOOK UP. Product rules: docs/SPEC.md
+ * (prototype contract history: docs/hackathon/DATA-MODEL.md).
  *
  * Person B owns this file. Person A imports from it and must not declare a
  * competing Moment type. Any change here needs both developers to agree first.

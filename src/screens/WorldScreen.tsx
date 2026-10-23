@@ -1,7 +1,7 @@
 /**
  * WORLD: what other people saw when they looked up. Person B owns this file.
  *
- * No likes, views, follows, comments or ranking — see PROJECT.md. The list is
+ * No likes, views, follows, comments or ranking — see docs/SPEC.md. The list is
  * whatever listPublicMoments returns, so private submissions never reach it.
  */
 

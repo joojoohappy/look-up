@@ -25,7 +25,7 @@ Use when the app opens on one phone and not another (LU-3). Record what you see 
 
 1. **Read the exact error on the failing phone.** Screenshot it. Also copy the Metro terminal output from the moment the phone connects.
 2. **"Project is incompatible with this version of Expo Go"** → SDK mismatch (LU-2). Compare Expo Go's supported SDK (Expo Go → Settings/About) with SDK 57.
-3. **Expo Go asks to sign in / says the project belongs to another account** → sign out of Expo Go on the phone (BUILD-PLAN.md step 1).
+3. **"You need to be signed in to Expo Go and Expo CLI"** (iPhone only) → sign both into the same Expo account; see DEVICE_CHECKS.md step 0 (includes the Windows `npx expo login` workaround).
 4. **Spins, then "Could not connect to development server" / timeout**:
    - Same Wi-Fi as the computer? Guest/office/school networks often block device-to-device traffic.
    - iPhone: Settings → Privacy & Security → **Local Network** → Expo Go must be on. If it was denied once, iOS will not ask again.

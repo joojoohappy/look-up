@@ -81,3 +81,15 @@
 **Possible harness lessons (candidates only)**
 - When CI logs are unreachable, make every step publish its own failure tail as an annotation; it turned three blind failures into one-line fixes.
 - TypeScript 6 `types` default is `[]`: import test globals explicitly instead of relying on `@types/*`.
+
+## 2026-10-23 (session 3) — device test, merge, unified spec
+
+**Device (owner, iPhone, Expo Go SDK 58):** DEVICE_CHECKS section 3 passed on `upgrade/expo-sdk-58`; PR #3 merged. Found: iPhone Expo Go requires Expo CLI and Expo Go signed in to the same account (likely LU-3 root cause); Windows `npx expo login` crashes opening the browser (`&` in URL) — use `-u` or `EXPO_TOKEN`.
+
+**Owner feedback:** the prototype forces capture before viewing WORLD, lacks location and social link; wants a full v1, public repo for a hackathon portfolio, launch in 1–2 months.
+
+**Decisions:** owner chose features row by row in the decision doc (claude.ai artifact 7DXtEHeTKfeiCq73tRFYbb): Sky features (feed-first, city location, social link, tags, date browsing, report, 7 languages, anonymous Firebase) + Look up rules (name, 50-char note, private MINE, 3/day, today-photo via EXIF). Delete refunds quota. Publish time always shown. Visual style: compare 2–3 directions. Dashboard updated by Claude when work happens (no schedule).
+
+**Changed:** `docs/SPEC.md` (v1 spec, F-01…F-13); README rewritten for visitors; AGENTS.md rewritten (spec-first, issue/branch/PR rules); hackathon docs, prompts, pitch deck and seed photos moved to `docs/hackathon/`; Expo login rule recorded.
+
+**Not found:** the September Sky code (`sky-app.zip`) is not in the owner's Documents, Downloads or Desktop; v1 is built from the spec.

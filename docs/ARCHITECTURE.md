@@ -1,8 +1,10 @@
 # Architecture decisions and boundaries
 
+> 這份描述的是**目前程式碼**（2026-10 黑客松原型：單機、記憶體內 store、無後端）的架構與版本。v1 的目標架構（Firebase、匿名登入、安全規則）見 [SPEC.md](SPEC.md) F-12，實作後更新本文件。
+
 ## Freeze before coding
 
-兩位開發者都沒有 App 經驗，預設採用 [BUILD-PLAN.md](BUILD-PLAN.md) 的 Expo + React Native + TypeScript。先由一人建立並實機跑通共同 scaffold，再分支；若要改選，必須在開發前雙方共同更新本表。
+兩位開發者都沒有 App 經驗，預設採用 [BUILD-PLAN.md](hackathon/BUILD-PLAN.md) 的 Expo + React Native + TypeScript。先由一人建立並實機跑通共同 scaffold，再分支；若要改選，必須在開發前雙方共同更新本表。
 
 | Decision | Frozen choice |
 | --- | --- |
@@ -11,7 +13,7 @@
 | Image storage and URI lifecycle | P0 使用 picker URI，僅保證同一 app session 可顯示 |
 | Moment persistence / public query | P0 單一 in-memory store；無跨裝置共享或 durable persistence |
 | Unique contract file | `src/types/moment.ts`，B 維護 |
-| Shared submit/query interface | `src/data/moments.ts`，B 維護；見 BUILD-PLAN.md |
+| Shared submit/query interface | `src/data/moments.ts`，B 維護；見 hackathon/BUILD-PLAN.md |
 | App entry / navigation | `App.tsx`（`index.ts` → `registerRootComponent`）。無 Expo Router、無 navigation library；三個畫面用 App.tsx 內的 state 切換 |
 | Shared entry point / navigation integrator | **Person B 擔任 integrator**；只有 B 修改 `App.tsx`、`index.ts`、`package.json` 與 shared config |
 

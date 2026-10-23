@@ -1,5 +1,5 @@
 /**
- * App entry. Integrator-owned — see docs/BUILD-PLAN.md. Nobody else edits this.
+ * App entry: the screen state machine. Product flow: docs/SPEC.md.
  *
  * Holds the screen state machine and joins Person A's capture journey to
  * Person B's store: A awaits onSubmit, this file makes WORLD reload.

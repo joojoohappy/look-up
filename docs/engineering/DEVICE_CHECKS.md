@@ -5,7 +5,11 @@ CI 只證明程式能安裝、型別正確、測試通過、能打包。**手機
 ## 0. 一次性準備（Windows 電腦）
 
 1. 安裝 [Node.js 24 LTS](https://nodejs.org/) 和 [Git for Windows](https://git-scm.com/download/win)。
-2. iPhone 從 App Store 安裝 **Expo Go**。打開 Expo Go，若已登入任何帳號，先**登出**（見 BUILD-PLAN.md 第 1 步）。
+2. 手機安裝 **Expo Go**。
+   - **iPhone 實機必須登入 Expo 帳號**：電腦和手機要登入**同一個**免費帳號（[expo.dev/signup](https://expo.dev/signup)），兩邊都沒登入也打不開（[Expo 說明](https://docs.expo.dev/troubleshooting/expo-go-sign-in-required/)）。
+     - 手機：Expo Go 右上角帳號圖示 → 登入。
+     - 電腦：`npx expo login -u <帳號>`，再用 `npx expo whoami` 確認。Windows 上 `npx expo login` 開瀏覽器會當掉（網址裡的 `&` 被 cmd 誤判），所以用 `-u`；沒有密碼的帳號改用 Access Token：expo.dev → Settings → Access tokens，再在同一個視窗 `set EXPO_TOKEN=<token>`。token 等同密碼，不要分享。
+   - Android 不需要登入。
 3. 電腦和 iPhone 連**同一個 Wi-Fi**。
 
 ## 1. 在電腦上啟動
