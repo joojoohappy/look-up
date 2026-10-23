@@ -4,14 +4,22 @@
   "version": "0.1.0",
   "main": "index.ts",
   "dependencies": {
-    "expo": "~57.0.31",
-    "expo-image-picker": "~57.0.20",
-    "expo-status-bar": "~57.0.1",
-    "react": "19.2.3",
-    "react-native": "0.86.3"
+    "expo": "^58.0.0",
+    "expo-image-picker": "~58.0.10",
+    "expo-status-bar": "~58.0.4",
+    "react": "19.3.0",
+    "react-native": "0.88.0",
+    "react-native-safe-area-context": "~5.10.1"
   },
   "devDependencies": {
-    "@types/react": "~19.2.2",
+    "@jest/globals": "30.5.2",
+    "@testing-library/react-native": "^14.1.0",
+    "@types/react": "~19.3.0",
+    "eslint": "^9.39.5",
+    "eslint-config-expo": "~58.0.4",
+    "jest": "~30.5.2",
+    "jest-expo": "~58.0.12",
+    "react-test-renderer": "19.3.0",
     "typescript": "~6.0.3"
   },
   "scripts": {
@@ -21,8 +29,20 @@
     "ios": "expo start --ios",
     "web": "expo start --web",
     "typecheck": "tsc --noEmit",
-    "test": "node -e \"require('fs').rmSync('.test-build',{recursive:true,force:true})\" && tsc -p tsconfig.test.json && node --test \"tests/**/*.test.js\"",
+    "lint": "expo lint",
+    "test": "npm run test:unit && npm run test:components",
+    "test:unit": "node -e \"require('fs').rmSync('.test-build',{recursive:true,force:true})\" && tsc -p tsconfig.test.json && node --test \"tests/**/*.test.js\"",
+    "test:components": "jest --ci",
     "bundle:check": "expo export --platform android --platform ios --output-dir .bundle-check",
-    "check": "npm run typecheck && npm test && npm run bundle:check"
+    "check": "npm run typecheck && npm run lint && npm test && npm run bundle:check"
+  },
+  "jest": {
+    "preset": "jest-expo",
+    "setupFiles": [
+      "<rootDir>/jest.setup.js"
+    ],
+    "testMatch": [
+      "<rootDir>/__tests__/**/*.test.tsx"
+    ]
   }
 }

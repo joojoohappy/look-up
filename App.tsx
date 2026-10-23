@@ -8,6 +8,7 @@
 import { StatusBar } from 'expo-status-bar';
 import { useCallback, useEffect, useState } from 'react';
 import { BackHandler } from 'react-native';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { submitMoment } from './src/data/moments';
 import CaptureScreen from './src/screens/CaptureScreen';
@@ -47,8 +48,10 @@ export default function App() {
     return () => subscription.remove();
   }, [screen]);
 
+  // SafeAreaProvider gives every screen real insets on both platforms. React
+  // Native's own SafeAreaView only pads on iOS and is deprecated (LU-4).
   return (
-    <>
+    <SafeAreaProvider>
       {screen === 'landing' ? <LandingScreen onStart={() => setScreen('capture')} /> : null}
       {screen === 'capture' ? (
         <CaptureScreen
@@ -61,6 +64,6 @@ export default function App() {
         <WorldScreen reloadToken={submitCount} onLookUp={() => setScreen('landing')} />
       ) : null}
       <StatusBar style="auto" />
-    </>
+    </SafeAreaProvider>
   );
 }
